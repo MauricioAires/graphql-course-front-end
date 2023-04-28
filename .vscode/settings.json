@@ -1,5 +1,5 @@
 {
-  "editor.fontSize": 18,
+  "editor.fontSize": 0,
   "window.zoomLevel": 0,
   "editor.mouseWheelZoom": false,
   "code-runner.executorMap": {
@@ -25,7 +25,7 @@
   ],
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true,
-    "source.fixAll": true,
+    "source.fixAll": true
     // "source.organizeImports": true
-  },
+  }
 }
