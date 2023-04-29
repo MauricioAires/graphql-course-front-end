@@ -4,8 +4,13 @@ import { Helmet } from 'react-helmet';
 
 import { GQL_LOGIN } from '../../graphql/mutations/auth';
 import { Loading } from 'components/Loading';
+import { useState } from 'react';
 
 export const Login = () => {
+  const [formData, setFormData] = useState({
+    userName: '',
+    password: '',
+  });
   const [login, { loading, error, data }] = useMutation(GQL_LOGIN, {
     onError: () => {},
   });
@@ -17,12 +22,16 @@ export const Login = () => {
     const usernameInput = form.username;
     const passwordInput = form.password;
 
+    const data = {
+      userName: usernameInput.value,
+      password: passwordInput.value,
+    };
+
+    setFormData(data);
+
     login({
       variables: {
-        data: {
-          userName: usernameInput.value,
-          password: passwordInput.value,
-        },
+        data,
       },
     });
   };
@@ -38,6 +47,7 @@ export const Login = () => {
         handleLogin={handleLogin}
         formDisabled={false}
         formError={error?.message}
+        formData={formData}
       />
     </>
   );
