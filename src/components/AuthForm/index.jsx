@@ -7,6 +7,7 @@ import { FormInput } from 'components/FormInput';
 import P from 'prop-types';
 import { Loading } from 'components/Loading';
 import { DefaultContainer } from '../DefaultContainer';
+import { loginFormVar } from 'graphql/reactive-var/login-form';
 
 const fakeCallback = (v) => v;
 
@@ -18,7 +19,6 @@ export const AuthForm = ({
   setUserName = fakeCallback,
   setPassword = fakeCallback,
   formDisabled = true,
-  formData,
 }) => {
   return (
     <DefaultContainer>
@@ -33,7 +33,7 @@ export const AuthForm = ({
           placeholder="Type your username"
           icon={<Person />}
           disabled={loading}
-          textValue={formData?.userName}
+          textValue={loginFormVar.get()?.userName}
         />
         <FormInput
           label="password"
@@ -42,7 +42,6 @@ export const AuthForm = ({
           icon={<Password />}
           disabled={loading}
           type="password"
-          textValue={formData?.password}
         />
 
         {!!formError && <FormErrorMessage>{formError}</FormErrorMessage>}
@@ -73,8 +72,4 @@ AuthForm.propTypes = {
   setPassword: P.func,
   formError: P.string,
   formDisabled: P.bool,
-  formData: P.shape({
-    userName: P.string,
-    password: P.string,
-  }).isRequired,
 };
