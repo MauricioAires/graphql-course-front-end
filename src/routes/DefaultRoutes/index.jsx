@@ -5,14 +5,14 @@ import { Login } from 'page-templates/Login';
 import { Register } from 'page-templates/Register';
 import { PostDetails } from 'page-templates/PostDetails';
 import { PostEditor } from '../../page-templates/PostEditor';
+import { PrivateRoute } from 'routes/PrivateRoute';
 
 export const DefaultRoutes = () => {
   return (
     <Switch>
-      {/* <PrivateRoute path="/post/:id" exact>
-        <PostTemplate />
-      </PrivateRoute> */}
-      <Route component={Home} path="/" exact />
+      <PrivateRoute path="/" exact>
+        <Home />
+      </PrivateRoute>
       <Route component={Login} path="/login" exact />
       <Route component={Register} path="/register" exact />
       <Route component={PostDetails} path="/post/:id" exact />

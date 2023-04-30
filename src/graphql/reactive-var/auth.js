@@ -53,7 +53,7 @@ const hydrate = () => {
   setVar(JSON.stringify(localDataStr));
 };
 
-export const useAuthVay = () => {
+export const useAuthVar = () => {
   authDataManager.hydrate();
 
   return useReactiveVar(authVar);

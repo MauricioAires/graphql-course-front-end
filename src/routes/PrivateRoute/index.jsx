@@ -1,12 +1,10 @@
+import { useAuthVar } from 'graphql/reactive-var/auth';
 import P from 'prop-types';
 import { Redirect, Route } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-export const PrivateRoute = ({ children = '', component = '', ...rest }) => {
-  let { authData = {} } = {
-    /* ????? */
-  };
-  const isLoggedIn = authData && !!authData.userId;
+export const PrivateRoute = ({ children, component = '', ...rest }) => {
+  const authData = useAuthVar();
 
   if (component) {
     throw new Error(
@@ -15,7 +13,7 @@ export const PrivateRoute = ({ children = '', component = '', ...rest }) => {
   }
 
   const renderFn = ({ location }) => {
-    if (isLoggedIn) return children;
+    if (authData.isLoggedId) return children;
 
     const redirectConfig = {
       pathname: '/login',
