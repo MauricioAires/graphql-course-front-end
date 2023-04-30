@@ -50,7 +50,8 @@ const hydrate = () => {
     return;
   }
 
-  setVar(JSON.stringify(localDataStr));
+  const data = JSON.parse(localDataStr);
+  setVar(data?.userName, data?.userId, data?.isLoggedId);
 };
 
 export const useAuthVar = () => {

@@ -14,6 +14,8 @@ export const Login = () => {
     onError: () => {},
     onCompleted: ({ login: data }) => {
       authDataManager.setVar(loginFormVar.get().userName, data.userId, true);
+
+      window.location.href = '/';
     },
   });
 
@@ -47,7 +49,7 @@ export const Login = () => {
 
       <AuthForm
         handleLogin={handleLogin}
-        formDisabled={false}
+        formDisabled={loading}
         formError={error?.message}
       />
     </>
