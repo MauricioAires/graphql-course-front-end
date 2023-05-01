@@ -10,6 +10,8 @@ import { dateFormatter } from 'utils/date-formatter';
 import { DefaultContainer } from '../DefaultContainer';
 import { UserPropTypes } from './prop-types';
 import * as Styled from './styles';
+import { useMutation } from '@apollo/client';
+import { GQL_DELETE_POST } from 'graphql/mutations/post';
 
 const addLineBreaks = (text) => {
   return text.replace(/\n/g, '<br />');
@@ -31,6 +33,20 @@ export const Post = ({
 }) => {
   const ref = useRef();
   const history = useHistory();
+  const [deletePost] = useMutation(GQL_DELETE_POST, {
+    variables: {
+      postId: id,
+    },
+    onError: () => {},
+  });
+
+  const handleDelete = async () => {
+    const shouldDelete = confirm(`Are you sure you want to delete this post?`);
+
+    if (!shouldDelete) return;
+
+    await deletePost();
+  };
 
   if (loading) return <Loading loading={loading} />;
   if (error) return <DefaultError error={error} />;
@@ -62,7 +78,7 @@ export const Post = ({
               buttonSize="small"
               icon={<Delete />}
               bgColor="secondary"
-              clickedFn={() => {}}
+              clickedFn={handleDelete}
               iconOnly
               outlined
             />
