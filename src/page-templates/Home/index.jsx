@@ -8,14 +8,21 @@ import { GQL_POSTS, GQL_POSTS_LIMIT } from 'graphql/queries/post';
 import { Loading } from 'components/Loading';
 import { DefaultError } from 'components/DefaultError';
 import { FormButton } from 'components/FormButton';
+import { useAuthVar } from 'graphql/reactive-var/auth';
 
 export const Home = () => {
-  const { data, loading, error, fetchMore } = useQuery(GQL_POSTS, {
-    onCompleted: () => {},
-    onError: () => {},
-  });
+  const authVar = useAuthVar();
 
-  if (loading) return <Loading loading={loading} />;
+  const { data, loading, error, fetchMore, previousData } = useQuery(
+    GQL_POSTS,
+    {
+      onCompleted: () => {},
+      onError: () => {},
+      notifyOnNetworkStatusChange: true,
+    },
+  );
+
+  if (loading && !previousData) return <Loading loading={loading} />;
   if (error) return <DefaultError error={error} />;
 
   if (!data) return null;
@@ -38,11 +45,9 @@ export const Home = () => {
   return (
     <>
       <Helmet title="Home - GraphQL + Apollo-Client - Otávio Miranda" />
-
       <Styled.Container>
         <Heading>Posts</Heading>
       </Styled.Container>
-
       <Styled.PostsContainer>
         {data?.posts.map((post) => {
           const uniqueKey = `home-post-${post.id}`;
@@ -54,13 +59,16 @@ export const Home = () => {
               body={post.body}
               user={post.user}
               createdAt={post.createdAt}
+              loggedUserId={authVar?.userId}
             />
           );
         })}
       </Styled.PostsContainer>
 
       <Styled.Container>
-        <FormButton clickedFn={handleLoadMore}>Load more</FormButton>
+        <FormButton clickedFn={handleLoadMore} disabled={loading}>
+          {loading ? 'Carregado..' : 'Load more'}
+        </FormButton>
       </Styled.Container>
     </>
   );
