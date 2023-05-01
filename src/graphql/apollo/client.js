@@ -1,7 +1,9 @@
-import { ApolloClient, InMemoryCache } from '@apollo/client';
-import { httpLink } from 'graphql/links/http-link';
+import { ApolloClient } from '@apollo/client';
+
+import { httpLink } from './links/http-link';
+import { cache } from './cache/in-memory-cache';
 
 export const apolloClient = new ApolloClient({
-  cache: new InMemoryCache(),
+  cache,
   link: httpLink,
 });
