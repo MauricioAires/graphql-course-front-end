@@ -38,6 +38,26 @@ export const Post = ({
       postId: id,
     },
     onError: () => {},
+    /**
+     *
+     * @param update é uma função que é executa apos o sucesso de uma mutation utilizado para modificar o cache local
+     */
+    update: (cache) => {
+      cache.modify({
+        fields: {
+          posts: (existing, { readField }) => {
+            return existing.filter((postRef) => {
+              /**
+               * NOTE: readField extrai um field uma informação da referencia
+               */
+              const postId = readField('id', postRef);
+
+              return id !== postId;
+            });
+          },
+        },
+      });
+    },
   });
 
   const handleDelete = async () => {
