@@ -40,6 +40,7 @@ export const PostDetails = () => {
         user={post.user}
         createdAt={post.createdAt}
         loggedUserId={authVar.userId}
+        numberOfComments={post.numberOfComments}
       />
 
       {post.comments.map((comment) => {
