@@ -23,34 +23,37 @@ export const PostDetails = () => {
     },
     onError: () => {},
   });
-  const [createComment] = useMutation(GQL_CREATE_COMMENT, {
-    onError: () => {},
-    onCompleted: () => {
-      toast.success('comment created successfully');
-    },
-    update: (cache, { data }) => {
-      const postIdRef = cache.identify({
-        __typename: 'Post',
-        id, // id of the post
-      });
+  const [createComment, { loading: loadingCreateComment }] = useMutation(
+    GQL_CREATE_COMMENT,
+    {
+      onError: () => {},
+      onCompleted: () => {
+        toast.success('comment created successfully');
+      },
+      update: (cache, { data }) => {
+        const postIdRef = cache.identify({
+          __typename: 'Post',
+          id, // id of the post
+        });
 
-      cache.modify({
-        id: postIdRef,
-        fields: {
-          comments: (existing) => {
-            const newCommentRef = cache.writeFragment({
-              fragment: GQL_FRAGMENT_COMMENT,
-              data: {
-                ...data.createComment,
-              },
-            });
+        cache.modify({
+          id: postIdRef,
+          fields: {
+            comments: (existing) => {
+              const newCommentRef = cache.writeFragment({
+                fragment: GQL_FRAGMENT_COMMENT,
+                data: {
+                  ...data.createComment,
+                },
+              });
 
-            return [...existing, newCommentRef];
+              return [...existing, newCommentRef];
+            },
           },
-        },
-      });
+        });
+      },
     },
-  });
+  );
 
   if (loading) return <Loading loading={loading} />;
   if (error) return <DefaultError error={error} />;
@@ -59,7 +62,7 @@ export const PostDetails = () => {
 
   if (!post) return null;
 
-  const handleCreateComment = async (comment) => {
+  const handleCreateComment = async (comment, callback) => {
     await createComment({
       variables: {
         data: {
@@ -68,6 +71,10 @@ export const PostDetails = () => {
         },
       },
     });
+
+    if (callback) {
+      callback();
+    }
   };
 
   return (
@@ -96,7 +103,10 @@ export const PostDetails = () => {
         );
       })}
 
-      <CommentForm handleSubmit={handleCreateComment} />
+      <CommentForm
+        buttonDisabled={loadingCreateComment || loading}
+        handleSubmit={handleCreateComment}
+      />
     </>
   );
 };
