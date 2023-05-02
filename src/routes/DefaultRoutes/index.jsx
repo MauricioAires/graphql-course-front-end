@@ -13,9 +13,14 @@ export const DefaultRoutes = () => {
       <PrivateRoute path="/" exact>
         <Home />
       </PrivateRoute>
+      <PrivateRoute path="/post/create" exact>
+        <PostEditor />
+      </PrivateRoute>
+
       <PrivateRoute path="/post/:id" exact>
         <PostDetails />
       </PrivateRoute>
+
       <PrivateRoute path="/post/:id/edit" exact>
         <PostEditor />
       </PrivateRoute>

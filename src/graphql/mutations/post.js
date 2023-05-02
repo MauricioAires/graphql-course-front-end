@@ -24,3 +24,17 @@ export const GQL_UPDATE_POST = gql`
   ${GQL_FRAGMENT_POST}
   ${GQL_FRAGMENT_USER}
 `;
+
+export const GQL_CREATE_POST = gql`
+  mutation CreatePost($data: CreatePostInput! = { title: "", body: "" }) {
+    createPost(data: $data) {
+      ...post
+      user {
+        ...user
+      }
+    }
+  }
+
+  ${GQL_FRAGMENT_POST}
+  ${GQL_FRAGMENT_USER}
+`;
