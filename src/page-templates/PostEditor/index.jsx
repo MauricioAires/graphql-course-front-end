@@ -13,11 +13,11 @@ export const PostEditor = () => {
   const [getPost, { loading, error, data }] = useLazyQuery(GQL_POST, {
     onError: () => {},
   });
-  const [
-    updatePost,
-    { loading: loadingUpdate, error: updateError, data: dateUpdate },
-  ] = useMutation(GQL_UPDATE_POST, {
+  const [updatePost, { error: updateError }] = useMutation(GQL_UPDATE_POST, {
     onError: () => {},
+    onCompleted: () => {
+      toast.success('post updated successfully');
+    },
   });
 
   useEffect(() => {
@@ -30,7 +30,14 @@ export const PostEditor = () => {
     });
   }, [id, getPost]);
   const handleUpdate = async (formValue) => {
-    console.log({ formValue });
+    await updatePost({
+      variables: {
+        postId: id,
+        data: {
+          ...formValue,
+        },
+      },
+    });
   };
 
   const handleCreate = async (formValue) => {
