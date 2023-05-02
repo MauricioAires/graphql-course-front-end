@@ -6,11 +6,13 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { CommentForm } from 'components/CommentForm';
 import { Helmet } from 'react-helmet';
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { GQL_POST } from 'graphql/queries/post';
 import { Loading } from 'components/Loading';
 import { DefaultError } from 'components/DefaultError';
 import { useAuthVar } from 'graphql/reactive-var/auth';
+import { GQL_CREATE_COMMENT } from 'graphql/mutations/comment';
+import { GQL_FRAGMENT_COMMENT } from 'graphql/fragments/comment';
 
 export const PostDetails = () => {
   const authVar = useAuthVar();
@@ -21,6 +23,34 @@ export const PostDetails = () => {
     },
     onError: () => {},
   });
+  const [createComment] = useMutation(GQL_CREATE_COMMENT, {
+    onError: () => {},
+    onCompleted: () => {
+      toast.success('comment created successfully');
+    },
+    update: (cache, { data }) => {
+      const postIdRef = cache.identify({
+        __typename: 'Post',
+        id, // id of the post
+      });
+
+      cache.modify({
+        id: postIdRef,
+        fields: {
+          comments: (existing) => {
+            const newCommentRef = cache.writeFragment({
+              fragment: GQL_FRAGMENT_COMMENT,
+              data: {
+                ...data.createComment,
+              },
+            });
+
+            return [...existing, newCommentRef];
+          },
+        },
+      });
+    },
+  });
 
   if (loading) return <Loading loading={loading} />;
   if (error) return <DefaultError error={error} />;
@@ -28,6 +58,17 @@ export const PostDetails = () => {
   const post = data?.post;
 
   if (!post) return null;
+
+  const handleCreateComment = async (comment) => {
+    await createComment({
+      variables: {
+        data: {
+          postId: post.id,
+          comment,
+        },
+      },
+    });
+  };
 
   return (
     <>
@@ -55,9 +96,7 @@ export const PostDetails = () => {
         );
       })}
 
-      <CommentForm
-        handleSubmit={(comment) => toast.success(`Your comment is: ${comment}`)}
-      />
+      <CommentForm handleSubmit={handleCreateComment} />
     </>
   );
 };
